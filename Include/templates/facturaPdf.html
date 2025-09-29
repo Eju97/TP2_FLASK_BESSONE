@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{{ url_for('static', filename='pdf.css') }}">
+</head>
+<body>
+    <h2>Factura N° {{ factura.id_factura }}</h2>
+
+    <div class="info">
+        <p><strong>Cliente:</strong> {{ factura.cliente.nombre }}</p>
+        <p><strong>Fecha:</strong> {{ factura.fecha.strftime("%d/%m/%Y") }}</p>
+        <p><strong>Observaciones:</strong> {{ factura.observaciones or "-" }}</p>
+    </div>
+
+    <h4>Detalle de Productos</h4>
+    <table>
+        <thead>
+            <tr>
+                <th>Producto</th>
+                <th>Cantidad</th>
+                <th>Precio Unitario</th>
+                <th>Subtotal</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for d in detalles %}
+            <tr>
+                <td>{{ d.producto.descripcion }}</td>
+                <td>{{ d.cantidad }}</td>
+                <td>${{ d.precio_unitario }}</td>
+                <td>${{ d.subtotal }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="total">
+        Total: ${{ factura.total }}
+    </div>
+</body>
+</html>

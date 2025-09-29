@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block content %}
+  <h2>Detalle de Factura #{{ factura.id_factura }}</h2>
+  <p><strong>Cliente:</strong> {{ factura.cliente.nombre }}</p>
+  <p><strong>Total:</strong> ${{ factura.total }}</p>
+  <p><strong>Observaciones:</strong> {{ factura.observaciones or 'Sin observaciones' }}</p>
+  <a href="{{ url_for('factura_pdf', id_factura=factura.id_factura) }}" class="btn btn-primary mt-3" target="_blank">
+    Exportar a PDF
+  </a>
+  <hr>
+  <h4>Productos</h4>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Producto</th>
+        <th>Cantidad</th>
+        <th>Precio Unitario</th>
+        <th>Subtotal</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for d in detalles %}
+      <tr>
+        <td>{{ d.producto.descripcion }}</td>
+        <td>{{ d.cantidad }}</td>
+        <td>${{ d.precio_unitario }}</td>
+        <td>${{ d.subtotal }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

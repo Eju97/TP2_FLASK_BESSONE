@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Nueva Factura</h2>
+<form method="POST">
+  <div class="mb-3">
+    <label for="cliente" class="form-label">Cliente</label>
+    <select class="form-select" name="id_cliente" required>
+      {% for c in clientes %}
+        <option value="{{ c.id_cliente }}">{{ c.nombre }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <h4>Productos</h4>
+  <div id="productos">
+    <div class="row mb-2 producto-item">
+      <div class="col">
+        <select class="form-select producto-select" name="productos[]" required>
+          <option value="" disabled selected>-- Seleccionar Producto --</option>
+          {% for p in productos %}
+            <option value="{{ p.id_producto }}" data-stock="{{ p.stock }}">
+              {{ p.descripcion }} - ${{ p.precio }} (Stock: {{ p.stock }})
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col">
+        <input type="number" class="form-control cantidad" name="cantidades[]" 
+               placeholder="Cantidad" min="1" value="1" required>
+      </div>
+      <div class="col-auto">
+        <button type="button" class="btn btn-danger btn-sm eliminar-producto">X</button>
+      </div>
+    </div>
+  </div>
+  <button type="button" id="agregarProducto" class="btn btn-secondary btn-sm mb-3">
+    + Agregar Producto
+  </button>
+  <div class="mb-3">
+    <label for="observaciones" class="form-label">Observaciones</label>
+    <textarea class="form-control" name="observaciones" rows="3"></textarea>
+  </div>
+  <hr>
+  <button type="submit" class="btn btn-success">Guardar Factura</button>
+  <a href="{{ url_for('listaFacturas') }}" class="btn btn-secondary">Cancelar</a>
+</form>
+<script> // Se agrega un script .js para que la carga de productos sea dinamica si se desea agregar mas de un producto.
+  function actualizarMax(input, select) {
+    const stock = select.options[select.selectedIndex].getAttribute("data-stock");
+    input.setAttribute("max", stock);
+  }
+  function actualizarOpciones() {
+    const seleccionados = Array.from(document.querySelectorAll(".producto-select"))
+      .map(sel => sel.value);
+    document.querySelectorAll(".producto-select").forEach(sel => {
+      Array.from(sel.options).forEach(opt => {
+        if (seleccionados.includes(opt.value) && opt.value !== sel.value) {
+          opt.disabled = true;
+        } else {
+          opt.disabled = false;
+        }
+      });
+    });
+  }
+  function inicializarItem(item) {
+    const select = item.querySelector(".producto-select");
+    const input = item.querySelector(".cantidad");
+    actualizarMax(input, select);
+    select.addEventListener("change", function() {
+      actualizarMax(input, select);
+      actualizarOpciones();
+    });
+    item.querySelector(".eliminar-producto").addEventListener("click", function() {
+      if (document.querySelectorAll(".producto-item").length > 1) {
+      item.remove();
+      actualizarOpciones();
+  }
+});
+  }
+  inicializarItem(document.querySelector(".producto-item"));
+  actualizarOpciones();
+  document.getElementById("agregarProducto").addEventListener("click", function() {
+    const contenedor = document.getElementById("productos");
+    const item = document.querySelector(".producto-item").cloneNode(true);
+    item.querySelector(".cantidad").value = 1;
+    item.querySelector(".producto-select").selectedIndex = 0;
+    inicializarItem(item);
+    contenedor.appendChild(item);
+    actualizarOpciones();
+  });
+</script>
+{% endblock %}

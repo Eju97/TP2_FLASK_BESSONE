@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+  <h2>Panel Principal</h2>
+  <hr>
+  <p>Bienvenido, {{ session['username'] }}</p>
+  <hr>
+  <div class="list-group">
+    <a href="{{ url_for('listaDeClientes') }}" class="list-group-item list-group-item-action">Gestión de Clientes</a>
+    <a href="{{ url_for('listaProductos') }}" class="list-group-item list-group-item-action">Gestión de Productos</a>
+    <a href="{{ url_for('listaFacturas') }}" class="list-group-item list-group-item-action">Gestión de Facturas</a>
+  </div>
+{% endblock %}

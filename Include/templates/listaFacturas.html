@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block content %}
+  <h2>Facturas</h2>
+  <a href="{{ url_for('nuevaFactura') }}" class="btn btn-primary mb-3">Emitir Factura</a>
+  <hr>
+  <form method="POST" class="mb-3">
+    <div class="row">
+      <div class="col-6">
+        <label for="cliente" class="form-label">Filtrar por Cliente</label>
+        <select class="form-select" name="id_cliente">
+          <option value="">-- Todos los clientes --</option>
+          {% for c in clientes %}
+            <option value="{{ c.id_cliente }}" {% if cliente and cliente.id_cliente == c.id_cliente %}selected{% endif %}>
+              {{ c.nombre }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-auto align-self-end">
+        <button type="submit" class="btn btn-primary">Aplicar Filtro</button>
+      </div>
+    </div>
+  </form>
+
+  {% if cliente %}
+    <h5>Mostrando facturas de <strong>{{ cliente.nombre }}</strong></h5>
+  {% endif %}
+
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Cliente</th>
+        <th>Fecha</th>
+        <th>Total</th>
+        <th>Observaciones</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for f in facturas %}
+      <tr>
+        <td>{{ f.id_factura }}</td>
+        <td>{{ f.cliente.nombre }}</td>
+        <td>{{ f.fecha.strftime('%d/%m/%Y') }}</td>
+        <td>${{ f.total }}</td>
+        <td>{{ f.observaciones }}</td>
+        <td>
+          <a href="{{ url_for('detalle_factura', id_factura=f.id_factura) }}" class="btn btn-info btn-sm">Ver Detalle</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% if cliente and facturas %}
+    <div class="alert alert-info mt-3">
+      Total facturado por <strong>{{ cliente.nombre }}</strong>: 
+      <strong>${{ facturas | sum(attribute='total') }}</strong>
+    </div>
+  {% endif %}
+{% endblock %}
