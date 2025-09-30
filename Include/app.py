@@ -103,7 +103,7 @@ def editarCliente(id_cliente):
 @app.route("/clientes/eliminar/<int:id_cliente>")
 def eliminarCliente(id_cliente):
     cliente = Cliente.query.get_or_404(id_cliente)
-    db.session.delete(cliente)
+    cliente.esActivo = False #en vez de eliminar al cliente, se deshabilita el mismo dentro de la base de datos, esto con el objetivo de mantener la integridad del sistema, como a su vez mantener el nombre del mismo en las facturas.
     db.session.commit()
     flash("Cliente borrado")
     return redirect(url_for("listaDeClientes"))
